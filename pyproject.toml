@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "justsubs"
+version = "0.1.0"
+description = "Download subtitles from YouTube as plain text."
+authors = ["Evgeny Pogrebnyak <e.pogrebnyak@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+yt-dlp = "^2024.3.10"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
