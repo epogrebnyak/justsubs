@@ -34,7 +34,7 @@ class Video:
         return "https://www.youtube.com/watch?v=" + self.slug
 
     def list_subs(self):
-        subprocess.run(["yt-dlp", "--list-subs", self.url], shell=True)
+        return subprocess.run(["yt-dlp", "--list-subs", self.url], shell=True)
 
     def subtitles(self, language, subs_format="vtt") -> Job:
         return Job(
