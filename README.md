@@ -4,6 +4,8 @@ Download subtitles from YouTube as plain text
 
 Based on [gist by glasslion](https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e).
 
+2024-03-23: Tested on Windows, may fail on Linux.
+
 ## Install 
 
 ```console
