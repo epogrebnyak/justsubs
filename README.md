@@ -2,13 +2,14 @@
 
 Download subtitles from YouTube as plain text
 
-Based on [gist by glasslion](https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e)
+Based on [gist by glasslion](https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e).
 
 Install (not a package yet):
 
 ```console
 git clone https://github.com/epogrebnyak/justsubs.git
 cd justsubs
+pip install requirements.txt
 ```
 
 List subtitle options:
