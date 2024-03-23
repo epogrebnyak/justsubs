@@ -6,7 +6,7 @@ Based on [gist by glasslion](https://gist.github.com/glasslion/b2fcad16bc8a9630d
 
 2024-03-23: Tested on Windows, may fail on Linux.
 
-## Install 
+## Install
 
 ```console
 pip install justsubs
@@ -22,7 +22,7 @@ pip install -e .
 
 ## Usage
 
-List subtitle options:
+### 1. List subtitle options
 
 ```python
 from justsubs import Video
@@ -34,13 +34,15 @@ video.list_subs()
 From the output above you will need a language slug like
 `en-uYU-mmqFLq8` as simple `en` might not work.
 
-Get subtitles as plain text:
+### 2. Download subtitles
 
 ```python
-from justsubs import Video
-
 subs = Video("KzWS7gJX5Z8").subtitles(language="en-uYU-mmqFLq8")
 subs.download()
-print(subs.get_text_blocks()[:10])
-print(subs.get_plain_text()[:550])
+```
+
+### 3. Print as plain text
+
+```python
+print(subs.get_plain_text()[:500])
 ```
