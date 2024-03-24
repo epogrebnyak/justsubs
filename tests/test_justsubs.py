@@ -1,9 +1,9 @@
 from justsubs import Video
 
 
-def test_list_subs_is_callable():
+def test_list_subs_completes():
     video = Video("KzWS7gJX5Z8")
-    video.list_subs()
+    assert video.list_subs().returncode == 0
 
 
 def test_get_text_blocks():
