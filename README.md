@@ -6,9 +6,9 @@ Pipelne:
 
 - learn what captions or subtitles are available for a video;
 - download VTT file with captions or subtitles;
-- extract text from VTT.
+- extract text from VTT[^1].
 
-VTT conversion based on [gist by glasslion](https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e).
+[^1]: VTT conversion based on [gist by glasslion](https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e).
 
 ## Install
 
