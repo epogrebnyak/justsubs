@@ -1,9 +1,7 @@
 """Download subtitles from YouTube as plain text.
 
 Must have yt-dlp installed (pip install yt-dlp).
-
 Using parts of code from https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e.
-
 Alternative package is https://github.com/jdepoix/youtube-transcript-api.
 """
 import re
@@ -34,6 +32,7 @@ class Subtitles:
 
     @property
     def cli(self):
+        """Show a command for download as string."""
         return " ".join(self.download_args)
 
 
@@ -44,6 +43,9 @@ class VTT(Subtitles):
 
     def text(self) -> str:
         return "\n".join(self.blocks())
+
+    def write_text(self, filename):
+        Path(filename).write_text(self.text(), encoding="utf-8")    
 
 
 @dataclass
