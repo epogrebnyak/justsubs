@@ -1,10 +1,14 @@
 # justsubs
 
-Download subtitles from YouTube as plain text
+Download subtitles from YouTube as plain text.
 
-Based on [gist by glasslion](https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e).
+Pipelne:
 
-2024-03-23: Tested on Windows, may fail on Linux.
+- learn what captions or subtitles are available for a video;
+- download VTT file with captions or subtitles;
+- extract text from VTT.
+
+VTT conversion based on [gist by glasslion](https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e).
 
 ## Install
 
@@ -31,18 +35,31 @@ video = Video("KzWS7gJX5Z8")
 video.list_subs()
 ```
 
-From the output above you will need a language slug like
+From the output above you may need a language identifier like
 `en-uYU-mmqFLq8` as simple `en` might not work.
 
 ### 2. Download subtitles
 
 ```python
-subs = Video("KzWS7gJX5Z8").subtitles(language="en-uYU-mmqFLq8")
-subs.download()
+subtitles = Video("KzWS7gJX5Z8").vtt(language="en-uYU-mmqFLq8")
+subtitles.download()
 ```
 
-### 3. Print as plain text
+### 3. Print subtitles as plain text
 
 ```python
-print(subs.get_plain_text()[:500])
+print(subtitles.text()[:500])
 ```
+
+### Entire pipeline
+
+```python
+from justsubs import get_text
+
+text = get_text(video_id="KzWS7gJX5Z8", language="en-uYU-mmqFLq8")
+print(text[:500])
+```
+
+## Alternatives
+
+Alternative and popular package is <https://github.com/jdepoix/youtube-transcript-api>.

@@ -1,6 +1,10 @@
 """Download subtitles from YouTube as plain text.
- 
-Using parts of code from https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e
+
+Must have yt-dlp installed (pip install yt-dlp).
+
+Using parts of code from https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e.
+
+Alternative package is https://github.com/jdepoix/youtube-transcript-api.
 """
 import re
 import subprocess
@@ -8,22 +12,38 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
+def get_text(video_id: str, language: str = "en") -> str:
+    """Get subtitles as plain text from YouTube video."""
+    return Video(video_id).vtt(language).download().text()
+
+
+def get_blocks(video_id: str, language: str = "en") -> list[str]:
+    """Get subtitles as list of strings from YouTube video."""
+    return Video(video_id).vtt(language).download().blocks()
+
+
 @dataclass
-class Job:
-    subs_format: str 
+class Subtitles:
     filename: Path
-    args: list[str]
+    download_args: list[str]
 
     def download(self, force=False):
         if force or not self.filename.exists():
-            subprocess.run(self.args)
+            subprocess.run(self.download_args)
+        return self
 
-    def get_text_blocks(self):
-        vtt_text = self.filename.read_text()
-        return get_plain_blocks(vtt_text)
+    @property
+    def cli(self):
+        return " ".join(self.download_args)
 
-    def get_plain_text(self):
-        return "\n".join(self.get_text_blocks())
+
+class VTT(Subtitles):
+    def blocks(self) -> list[str]:
+        vtt_text = self.filename.read_text(encoding="utf-8")
+        return blocks_from_text(vtt_text)
+
+    def text(self) -> str:
+        return "\n".join(self.blocks())
 
 
 @dataclass
@@ -35,31 +55,37 @@ class Video:
         return "https://www.youtube.com/watch?v=" + self.slug
 
     def list_subs(self):
+        """Print available subtitles to screen."""
         return subprocess.run(["yt-dlp", "--list-subs", self.url])
 
-    def subtitles(self, language, subs_format="vtt") -> Job:
-        return Job(
-            subs_format = subs_format,
-            filename=Path(f"{self.slug}.{language}.{subs_format}"),
-            args=[
+    def vtt(self, language: str):
+        """Create subtitles object of VTT type."""
+        return self.subtitles(language, subtitles_format="vtt", cls=VTT)
+
+    def subtitles(
+        self, language: str, subtitles_format: str, cls=Subtitles
+    ) -> Subtitles:
+        """Create subtitles object."""
+        return cls(
+            filename=Path(f"{self.slug}.{language}.{subtitles_format}"),
+            download_args=[
                 "yt-dlp",
                 self.url,
                 "--sub-langs",
                 language,
                 "--skip-download",
                 "--sub-format",
-                subs_format,
+                subtitles_format,
                 "--write-subs",
+                "--write-auto-subs",  # save captions
                 "--output",
                 self.slug,
             ],
         )
 
 
-def remove_tags(text):
-    """
-    Remove vtt markup tags
-    """
+def remove_tags(text: str) -> str:
+    """Remove VTT markup tags."""
     tags = [
         r"</c>",
         r"<c(\.color\w+)?>",
@@ -78,10 +104,8 @@ def remove_tags(text):
     return text
 
 
-def remove_header(lines):
-    """
-    Remove vtt file header
-    """
+def remove_header(lines: list[str]) -> list[str]:
+    """Remove VTT file header."""
     pos = -1
     for mark in (
         "##",
@@ -93,10 +117,8 @@ def remove_header(lines):
     return lines
 
 
-def merge_duplicates(lines):
-    """
-    Remove duplicated subtitles. Duplacates are always adjacent.
-    """
+def merge_duplicates(lines: list[str]):
+    """Remove duplicated subtitles. Duplacates are always adjacent."""
     last_timestamp = ""
     last_cap = ""
     for line in lines:
@@ -112,7 +134,7 @@ def merge_duplicates(lines):
                 last_cap = line
 
 
-def merge_short_lines(lines):
+def merge_short_lines(lines: list[str]):
     buffer = ""
     for line in lines:
         if line == "" or re.match("^\d{2}:\d{2}$", line):
@@ -127,7 +149,7 @@ def merge_short_lines(lines):
     yield buffer
 
 
-def get_plain_blocks(vtt_text: str):
+def blocks_from_text(vtt_text: str) -> list[str]:
     text = remove_tags(vtt_text)
     lines = remove_header(text.splitlines())
     lines = list(merge_duplicates(lines))
