@@ -36,7 +36,7 @@ video.list_subs()
 ```
 
 From the output above you may need a language identifier like
-`en-uYU-mmqFLq8` as simple `en` might not work.
+`en-uYU-mmqFLq8`, default is `en`.
 
 ### 2. Download subtitles
 
