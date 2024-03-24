@@ -1,4 +1,5 @@
 *.vtt
+*.txt
 *.json3
 
 # Byte-compiled / optimized / DLL files
