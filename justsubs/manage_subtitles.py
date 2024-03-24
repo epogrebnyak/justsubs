@@ -156,3 +156,6 @@ def blocks_from_text(vtt_text: str) -> list[str]:
     lines = remove_header(text.splitlines())
     lines = list(merge_duplicates(lines))
     return list(merge_short_lines(lines))
+
+def dict_from_text(vtt_text: str) -> dict[str, str]:
+    return blocks_from_text(vtt_text)

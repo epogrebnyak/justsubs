@@ -1,6 +1,6 @@
 from justsubs import Video
 
-# Сейчас blocks() возвращает список строк, должен возвращать
+# Сейчас dict_from_text() возвращает список строк, должен возвращать
 # словарь c ключами в виде меток времени, когда начинается блок,
 # и содержанием блока в виде строки или списка строк.
 # Также сейчас метки времени для блока расставляются неверно.
@@ -10,8 +10,9 @@ from justsubs import Video
 
 
 def test_blocks_new_behavior():
-    blocks = Video("gBnLl3QBOdM").vtt("en").download().blocks()
-    assert blocks == {
+    subtitles = Video("gBnLl3QBOdM").vtt("en").download()
+    vtt_text = subtitles.filename.read_text(encoding="utf-8")
+    assert dict_from_text(vtt_text) == {
         "00:09": """our initial idea was to extend some of the heavily researched ideas on spot and
 forward contracting foreign exchange and
 and extend them to to analyze volatility instead of the level of the exchange
