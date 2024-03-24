@@ -10,12 +10,13 @@ from pathlib import Path
 
 @dataclass
 class Job:
+    subs_format: str 
     filename: Path
     args: list[str]
 
     def download(self, force=False):
         if force or not self.filename.exists():
-            subprocess.run(self.args, shell=True)
+            subprocess.run(self.args)
 
     def get_text_blocks(self):
         vtt_text = self.filename.read_text()
@@ -34,11 +35,12 @@ class Video:
         return "https://www.youtube.com/watch?v=" + self.slug
 
     def list_subs(self):
-        subprocess.run(["yt-dlp", "--list-subs", self.url], shell=True)
+        subprocess.run(["yt-dlp", "--list-subs", self.url])
 
     def subtitles(self, language, subs_format="vtt") -> Job:
         return Job(
-            filename=Path(f"{self.slug}.{language}.vtt"),
+            subs_format = subs_format,
+            filename=Path(f"{self.slug}.{language}.{subs_format}"),
             args=[
                 "yt-dlp",
                 self.url,
