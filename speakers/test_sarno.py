@@ -10,6 +10,7 @@ from justsubs import Video
 # Тест по согласованию может быть уточнен.
 # Результат - PR в этот репо.
 
+
 @pytest.mark.skip
 def test_blocks_new_behavior():
     subtitles = Video("gBnLl3QBOdM").vtt("en").download()

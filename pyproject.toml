@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "justsubs"
-version = "0.2.0"
+version = "0.3.0"
 description = "Download subtitles from YouTube as plain text."
 authors = ["Evgeny Pogrebnyak <e.pogrebnyak@gmail.com>"]
 license = "MIT"
@@ -10,6 +10,10 @@ repository = "https://github.com/epogrebnyak/justsubs"
 [tool.poetry.dependencies]
 python = "^3.10"
 yt-dlp = "^2024.3.10"
+typer = "^0.10.0"
+
+[tool.poetry.scripts]
+justsubs = 'justsubs.cli:app'
 
 [build-system]
 requires = ["poetry-core"]

@@ -14,13 +14,14 @@ def remove_header(lines: list[str]) -> list[str]:
     pos = -1
     for mark in (
         "##",
-        "Language: en", # может и не 'en'
+        "Language: en",  # может и не 'en'
     ):
         if mark in lines:  # enumerate сюда
             pos = lines.index(mark)
     return lines[pos + 1 :]
 
-# ЕП: эту функция разбиваем на две - достать метку времени и убрать служебные символы и теги 
+
+# ЕП: эту функция разбиваем на две - достать метку времени и убрать служебные символы и теги
 def remove_tags(text: str) -> str:
     """Remove VTT markup tags."""
     tags = [
@@ -40,6 +41,7 @@ def remove_tags(text: str) -> str:
     text = re.sub(r"^\s+$", "", text, flags=re.MULTILINE)
     return text
 
+
 # ЕП: этот функционал остается, функция другая
 def merge_duplicates(lines: list[str]):
     """Remove duplicated subtitles. Duplacates are always adjacent."""
@@ -56,6 +58,7 @@ def merge_duplicates(lines: list[str]):
             if line != last_cap:
                 yield line
                 last_cap = line
+
 
 # ЕП: этот функционал остается, функция другая
 def merge_short_lines(lines: list[str]):
@@ -93,14 +96,17 @@ Block = tuple[time, list[str]]
 def raw_extract(text: str) -> list[Block]:
     pass
 
+
 def deduplicate(blocks: list[Block]) -> list[Block]:
     pass
+
 
 def merge(blocks: list[Block]) -> list[Block]:
     pass
 
+
 def get_blocks(text: str) -> list[Block]:
-    text = remove_header(text)   # убираем заголовок из текста
-    blocks = raw_extract(text)   # разбиваем текст на блоки
-    blocks = deduplicate(blocks) # обходим блоки, убираем соседние повторы
-    return merge(blocks)         # укрупняем блоки
+    text = remove_header(text)  # убираем заголовок из текста
+    blocks = raw_extract(text)  # разбиваем текст на блоки
+    blocks = deduplicate(blocks)  # обходим блоки, убираем соседние повторы
+    return merge(blocks)  # укрупняем блоки

@@ -12,9 +12,9 @@ def test_raw_extract_1():
 conventional risk premia that we know
 """
     assert raw_extract(doc1) == [
-        (time(0, 3, 1, 110),
-        ["conventional risk premia that we know"]),
+        (time(0, 3, 1, 110), ["conventional risk premia that we know"]),
     ]
+
 
 @pytest.mark.issue_3
 def test_raw_extract_2():
@@ -37,6 +37,7 @@ anomaly if you want that we didn't know
         (time(0, 3, 21, 90), ["anomaly if you want that we didn't know"]),
     ]
 
+
 @pytest.mark.issue_3
 def test_get_blocks():
     doc3 = """
@@ -56,6 +57,13 @@ esg  500000000000000000000000000000000000000000000000000000000000000000000000000
 klm klm klm
 """
     assert get_blocks(doc3) == [
-        (time(0, 3, 17, 340), ["abc", "def", "esg  50000000000000000000000000000000000000000000000000000000000000000000000000000000000000"]),
-        (time(0, 4), ["klm klm klm"])
-        ]
+        (
+            time(0, 3, 17, 340),
+            [
+                "abc",
+                "def",
+                "esg  50000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            ],
+        ),
+        (time(0, 4), ["klm klm klm"]),
+    ]

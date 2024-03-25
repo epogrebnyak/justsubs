@@ -2,13 +2,23 @@
 
 Download subtitles from YouTube as plain text.
 
-Pipelne:
+## Quick try
 
-1. decide what captions or subtitles are available for a video or choose default language `'en'`;
-2. download [VTT file](https://en.wikipedia.org/wiki/WebVTT);
-3. extract text from VTT[^1].
+```console
+pip install justsubs
+justsubs gBnLl3QBOdM --list
+justsubs gBnLl3QBOdM > sarno.txt
+justsubs --help
+```
+
+## Pipeline
+
+1. Decide what captions or subtitles are available for a video;
+2. Download [VTT file](https://en.wikipedia.org/wiki/WebVTT);
+3. Extract text from VTT[^1].
 
 [^1]: VTT conversion based on [gist by glasslion](https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e).
+
 
 ## Install
 

@@ -1,4 +1,4 @@
-"""Download subtitles from YouTube as plain text.
+"""Download subtitles from YouTube videos as plain text.
 
 Must have yt-dlp installed (pip install yt-dlp).
 
