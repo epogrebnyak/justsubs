@@ -1,4 +1,4 @@
-from justsubs.manage_vtt import raw_extract
+from justsubs.manage_vtt import raw_extract, get_blocks
 
 
 def test_raw_extract_1():
@@ -31,3 +31,25 @@ anomaly if you want that we didn't know
         ),
         (time(0, 3, 21, 90), ["anomaly if you want that we didn't know"]),
     ]
+
+def test_get_blocks():
+    doc3 = """
+WEBVTT
+Kind: captions
+Language: en
+
+00:03:17.340 --> 00:03:21.090
+abc
+def              
+
+00:03:21.090 --> 00:03:21.100
+def  
+esg  50000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+00:04:00.000 --> 00:04:21.100
+klm klm klm
+"""
+    assert get_blocks(doc3) == [
+        (time(0, 3, 17, 340), ["abc", "def", "esg  50000000000000000000000000000000000000000000000000000000000000000000000000000000000000"]),
+        (time(0, 4), ["klm klm klm"])
+        ]

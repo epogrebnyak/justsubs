@@ -5,7 +5,19 @@ Original code from https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5
 import re
 from datetime import time
 
+# ЕП: эта функция остается
+def remove_header(lines: list[str]) -> list[str]:
+    """Remove VTT file header."""
+    pos = -1
+    for mark in (
+        "##",
+        "Language: en",
+    ):
+        if mark in lines:
+            pos = lines.index(mark)
+    return lines[pos + 1 :]
 
+# ЕП: эту функция разбиваем на две - достать метку времени и убрать служебные символы и теги 
 def remove_tags(text: str) -> str:
     """Remove VTT markup tags."""
     tags = [
@@ -25,20 +37,7 @@ def remove_tags(text: str) -> str:
     text = re.sub(r"^\s+$", "", text, flags=re.MULTILINE)
     return text
 
-
-def remove_header(lines: list[str]) -> list[str]:
-    """Remove VTT file header."""
-    pos = -1
-    for mark in (
-        "##",
-        "Language: en",
-    ):
-        if mark in lines:
-            pos = lines.index(mark)
-    lines = lines[pos + 1 :]
-    return lines
-
-
+# ЕП: этот функционал остается, функция другая
 def merge_duplicates(lines: list[str]):
     """Remove duplicated subtitles. Duplacates are always adjacent."""
     last_timestamp = ""
@@ -55,14 +54,17 @@ def merge_duplicates(lines: list[str]):
                 yield line
                 last_cap = line
 
-
+# ЕП: этот функционал остается, функция другая
 def merge_short_lines(lines: list[str]):
     buffer = ""
     for line in lines:
+
+        # эту часть видимо пропустим
         if line == "" or re.match("^\d{2}:\d{2}$", line):
             yield "\n" + line
             continue
 
+        # накапливаем до длины строки 80?
         if len(line + buffer) < 80:
             buffer += " " + line
         else:
@@ -87,3 +89,15 @@ Block = tuple[time, list[str]]
 
 def raw_extract(text: str) -> list[Block]:
     pass
+
+def deduplicate(blocks: list[Block]) -> list[Block]:
+    pass
+
+def merge(blocks: list[Block]) -> list[Block]:
+    pass
+
+def get_blocks(text: str) -> list[Block]:
+    text = remove_header(text)
+    blocks = raw_extract(text) 
+    blocks = deduplicate(blocks)
+    return merge(blocks)
