@@ -4,8 +4,8 @@ Download subtitles from YouTube as plain text.
 
 Pipelne:
 
-1. decide what captions or subtitles are available for a video;
-2. download [VTT file][ https://en.wikipedia.org/wiki/WebVTT];
+1. decide what captions or subtitles are available for a video or choose default language 'en';
+2. download [VTT file](https://en.wikipedia.org/wiki/WebVTT);
 3. extract text from VTT[^1].
 
 [^1]: VTT conversion based on [gist by glasslion](https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e).
