@@ -4,7 +4,7 @@ Download subtitles from YouTube as plain text.
 
 Pipelne:
 
-1. decide what captions or subtitles are available for a video or choose default language 'en';
+1. decide what captions or subtitles are available for a video or choose default language `'en'`;
 2. download [VTT file](https://en.wikipedia.org/wiki/WebVTT);
 3. extract text from VTT[^1].
 
@@ -62,6 +62,5 @@ print(text[:500])
 
 ## Alternatives
 
-Alternative and popular package is <https://github.com/jdepoix/youtube-transcript-api>.
-
-[Whisper][https://github.com/openai/whisper] allows to do speech recognition locally. 
+- Popular package for Youtube subtitles is <https://github.com/jdepoix/youtube-transcript-api>.
+- [Whisper](https://github.com/openai/whisper) allows to do speech recognition locally.
