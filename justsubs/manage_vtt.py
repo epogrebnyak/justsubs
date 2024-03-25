@@ -100,7 +100,7 @@ def merge(blocks: list[Block]) -> list[Block]:
     pass
 
 def get_blocks(text: str) -> list[Block]:
-    text = remove_header(text)
-    blocks = raw_extract(text) 
-    blocks = deduplicate(blocks)
-    return merge(blocks)
+    text = remove_header(text)   # убираем заголовок из текста
+    blocks = raw_extract(text)   # разбиваем текст на блоки
+    blocks = deduplicate(blocks) # обходим блоки, убираем соседние повторы
+    return merge(blocks)         # укрупняем блоки

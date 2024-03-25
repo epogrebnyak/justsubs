@@ -1,19 +1,22 @@
 from datetime import time
 
+import pytest
+
 from justsubs.manage_vtt import get_blocks, raw_extract
 
 
+@pytest.mark.issue_3
 def test_raw_extract_1():
     doc1 = """
 00:03:01.110 --> 00:03:01.120 align:start position:0%
 conventional risk premia that we know
 """
     assert raw_extract(doc1) == [
-        time(0, 3, 1, 110),
-        ["conventional risk premia that we know"],
+        (time(0, 3, 1, 110),
+        ["conventional risk premia that we know"]),
     ]
 
-
+@pytest.mark.issue_3
 def test_raw_extract_2():
     doc2 = """
 00:03:17.340 --> 00:03:21.090 align:start position:0%
@@ -34,6 +37,7 @@ anomaly if you want that we didn't know
         (time(0, 3, 21, 90), ["anomaly if you want that we didn't know"]),
     ]
 
+@pytest.mark.issue_3
 def test_get_blocks():
     doc3 = """
 WEBVTT
