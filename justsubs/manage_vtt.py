@@ -7,6 +7,7 @@ Original code from https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5
 import re
 from datetime import time
 
+
 # ЕП: эта функция остается
 def remove_header(lines: list[str]) -> list[str]:
     """Remove VTT file header."""

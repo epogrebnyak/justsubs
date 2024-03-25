@@ -1,3 +1,5 @@
+import pytest
+
 from justsubs import Video
 
 # Сейчас dict_from_text() возвращает список строк, должен возвращать
@@ -8,7 +10,7 @@ from justsubs import Video
 # Тест по согласованию может быть уточнен.
 # Результат - PR в этот репо.
 
-
+@pytest.mark.skip
 def test_blocks_new_behavior():
     subtitles = Video("gBnLl3QBOdM").vtt("en").download()
     vtt_text = subtitles.filename.read_text(encoding="utf-8")

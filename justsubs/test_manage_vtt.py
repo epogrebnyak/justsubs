@@ -1,4 +1,6 @@
-from justsubs.manage_vtt import raw_extract, get_blocks
+from datetime import time
+
+from justsubs.manage_vtt import get_blocks, raw_extract
 
 
 def test_raw_extract_1():
