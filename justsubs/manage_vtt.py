@@ -1,5 +1,7 @@
 """Extract text blocks from VTT text.
 
+About VTT: https://en.wikipedia.org/wiki/WebVTT
+
 Original code from https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e
 """
 import re
@@ -11,9 +13,9 @@ def remove_header(lines: list[str]) -> list[str]:
     pos = -1
     for mark in (
         "##",
-        "Language: en",
+        "Language: en", # может и не 'en'
     ):
-        if mark in lines:
+        if mark in lines:  # enumerate сюда
             pos = lines.index(mark)
     return lines[pos + 1 :]
 
