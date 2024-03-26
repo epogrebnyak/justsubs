@@ -5,7 +5,25 @@ About VTT: https://en.wikipedia.org/wiki/WebVTT
 Original code from https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e
 """
 import re
+from collections import namedtuple
+from dataclasses import dataclass
 from datetime import time
+
+Block = tuple[time, list[str]]
+SegmentHeader = namedtuple("SegmentHeader", "start_time end_time styles")
+
+
+def parse_segment_header(segment_header: str) -> SegmentHeader:
+    _match = re.match(
+        r"(\d{2}:\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}:\d{2}\.\d{3})(.*)", segment_header
+    )
+    if _match is None:
+        raise ValueError("segment_header has invalid format")
+    return SegmentHeader(
+        time.fromisoformat(_match.group(1)),
+        time.fromisoformat(_match.group(2)),
+        _match.group(3).strip(),
+    )
 
 
 # ЕП: эта функция остается
@@ -90,19 +108,61 @@ def dict_from_text(vtt_text: str) -> dict[str, str]:
     return blocks_from_text(vtt_text)
 
 
-Block = tuple[time, list[str]]
+@dataclass
+class Segment:
+    start: time
+    body: str
+
+
+RE_SEGMENT = r"(\d{2}:\d{2}:\d{2}\.\d{3} --> .*)\n"
+RE_START = r"(\d{2}:\d{2}:\d{2}\.\d{3}) --> (.*)"
+
+
+def parse_start_from_header(line):
+    _match = re.match(RE_START, line)
+    if _match:
+        return time.fromisoformat(_match.group(1))
+    return None
+
+
+def yield_segments(text: str):
+    for line in re.split(RE_SEGMENT, text.strip())[1:]:
+        start = parse_start_from_header(line)
+        if start:
+            res = [start]
+        else:
+            res.append(line.strip())
+            yield Segment(res[0], res[1])
 
 
 def raw_extract(text: str) -> list[Block]:
-    pass
+    _split_segments = re.split(RE_SEGMENT, text.strip())[1:]
+    res = [
+        (
+            parse_segment_header(segment_header).start_time,
+            [remove_tags(_line.strip()) for _line in segment_body.strip().splitlines()],
+        )
+        for segment_header, segment_body in zip(
+            _split_segments[::2], _split_segments[1::2]
+        )
+    ]
+    return res
 
 
 def deduplicate(blocks: list[Block]) -> list[Block]:
-    pass
+    prev_line = None
+    for block in blocks:
+        lines = block[1]
+        for idx, line in list(enumerate(lines)):
+            if line == prev_line:
+                del lines[idx]
+                continue
+            prev_line = line
+    return blocks
 
 
 def merge(blocks: list[Block]) -> list[Block]:
-    pass
+    return blocks
 
 
 def get_blocks(text: str) -> list[Block]:

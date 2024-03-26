@@ -1,0 +1,137 @@
+diff --git a/justsubs/manage_vtt.py b/justsubs/manage_vtt.py
+index 1d2142a..589a7b4 100644
+--- a/justsubs/manage_vtt.py
++++ b/justsubs/manage_vtt.py
+@@ -4,9 +4,21 @@ About VTT: https://en.wikipedia.org/wiki/WebVTT
+ 
+ Original code from https://gist.github.com/glasslion/b2fcad16bc8a9630dbd7a945ab5ebf5e
+ """
++from collections import namedtuple
+ import re
+ from datetime import time
+ 
++Block = tuple[time, list[str]]
++SegmentHeader = namedtuple('SegmentHeader', 'start_time end_time styles')
++
++
++def parse_segment_header(segment_header: str) -> SegmentHeader:
++    _match = re.match(r"(\d{2}:\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}:\d{2}\.\d{3})(.*)", segment_header)
++    if _match is None:
++        raise ValueError("segment_header has invalid format")
++    return SegmentHeader(
++        time.fromisoformat(_match.group(1)), time.fromisoformat(_match.group(2)), _match.group(3).strip()
++    )
+ 
+ # ЕП: эта функция остается
+ def remove_header(lines: list[str]) -> list[str]:
+@@ -90,19 +102,32 @@ def dict_from_text(vtt_text: str) -> dict[str, str]:
+     return blocks_from_text(vtt_text)
+ 
+ 
+-Block = tuple[time, list[str]]
+-
+-
+ def raw_extract(text: str) -> list[Block]:
+-    pass
++    _split_segments = re.split(r"(\d{2}:\d{2}:\d{2}\.\d{3} --> .*)\n", text.strip())[1:]
++    res = [
++        (
++            parse_segment_header(segment_header).start_time,
++            [remove_tags(_line.strip()) for _line in segment_body.strip().splitlines()]
++        )
++        for segment_header, segment_body in zip(_split_segments[::2], _split_segments[1::2])
++    ]
++    return res
+ 
+ 
+ def deduplicate(blocks: list[Block]) -> list[Block]:
+-    pass
++    prev_line = None
++    for block in blocks:
++        lines = block[1]
++        for idx, line in list(enumerate(lines)):
++            if line == prev_line:
++                del lines[idx]
++                continue
++            prev_line = line
++    return blocks
+ 
+ 
+ def merge(blocks: list[Block]) -> list[Block]:
+-    pass
++    return blocks
+ 
+ 
+ def get_blocks(text: str) -> list[Block]:
+diff --git a/justsubs/test_manage_vtt.py b/justsubs/test_manage_vtt.py
+index 8e720f0..684ceb1 100644
+--- a/justsubs/test_manage_vtt.py
++++ b/justsubs/test_manage_vtt.py
+@@ -1,5 +1,4 @@
+ from datetime import time
+-
+ import pytest
+ 
+ from justsubs.manage_vtt import get_blocks, raw_extract
+@@ -12,7 +11,7 @@ def test_raw_extract_1():
+ conventional risk premia that we know
+ """
+     assert raw_extract(doc1) == [
+-        (time(0, 3, 1, 110), ["conventional risk premia that we know"]),
++        (time(0, 3, 1, 110000), ["conventional risk premia that we know"]),
+     ]
+ 
+ 
+@@ -28,13 +27,13 @@ anomaly if you want that we didn't know
+ """
+     assert raw_extract(doc2) == [
+         (
+-            time(0, 3, 17, 340),
++            time(0, 3, 17, 340000),
+             [
+                 "is coming from a different kind of",
+                 "anomaly if you want that we didn't know",
+             ],
+         ),
+-        (time(0, 3, 21, 90), ["anomaly if you want that we didn't know"]),
++        (time(0, 3, 21, 90000), ["anomaly if you want that we didn't know"]),
+     ]
+ 
+ 
+@@ -58,7 +57,7 @@ klm klm klm
+ """
+     assert get_blocks(doc3) == [
+         (
+-            time(0, 3, 17, 340),
++            time(0, 3, 17, 340000),
+             [
+                 "abc",
+                 "def",
+diff --git a/pyproject.toml b/pyproject.toml
+index cc9ddcf..bdbdb75 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -15,6 +15,11 @@ typer = "^0.10.0"
+ [tool.poetry.scripts]
+ justsubs = 'justsubs.cli:app'
+ 
++[tool.pytest.ini_options]
++markers = [
++    "issue_3",
++]
++
+ [build-system]
+ requires = ["poetry-core"]
+ build-backend = "poetry.core.masonry.api"
+diff --git a/speakers/test_sarno.py b/speakers/test_sarno.py
+index 7d2e4fb..9e67fc8 100644
+--- a/speakers/test_sarno.py
++++ b/speakers/test_sarno.py
+@@ -1,6 +1,7 @@
+ import pytest
+ 
+ from justsubs import Video
++from justsubs.manage_vtt import dict_from_text
+ 
+ # Сейчас dict_from_text() возвращает список строк, должен возвращать
+ # словарь c ключами в виде меток времени, когда начинается блок,

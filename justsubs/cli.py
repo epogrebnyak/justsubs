@@ -1,8 +1,9 @@
 import sys
 from typing import Optional
-from justsubs import Video
 
 import typer
+
+from justsubs import Video
 
 app = typer.Typer()
 
