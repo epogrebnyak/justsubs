@@ -21,7 +21,7 @@ anomaly if you want
     assert list(yield_segments(doc)) == [
         Segment(
             start=time(0, 3, 17, 340000),
-            body="is coming from a different kind of\nanomaly<00:03:18.340><c> if</c><00:03:18.520><c> you want</c>",
+            body="is coming from a different kind of\nanomaly<00:03:18.340><c> if</c><00:03:18.520><c> you want</c>\n\n",
         ),
         Segment(start=time(0, 3, 21, 90000), body="anomaly if you want"),
     ]

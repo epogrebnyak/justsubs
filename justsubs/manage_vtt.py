@@ -109,31 +109,56 @@ def dict_from_text(vtt_text: str) -> dict[str, str]:
 
 
 @dataclass
+class Multiline:
+    start: time
+    lines: list[str]
+
+
+@dataclass
 class Segment:
     start: time
     body: str
 
+    def sanitize(self):
+        return Segment(self.start, sanitize(self.block.strip()))
 
-RE_SEGMENT = r"(\d{2}:\d{2}:\d{2}\.\d{3} --> .*)\n"
-RE_START = r"(\d{2}:\d{2}:\d{2}\.\d{3}) --> (.*)"
+    def multiline(self):
+        return multiline(self.start, self.body.splitlines())
 
 
-def parse_start_from_header(line):
+def sanitize(text: str) -> str:
+    tags = [
+        r"</c>",
+        r"<c(\.color\w+)?>",
+        r"<\d{2}:\d{2}:\d{2}\.\d{3}>",
+    ]
+
+    for pat in tags:
+        text = re.sub(pat, "", text)
+    return text
+
+RE_SEGMENT = r"(\d{2}:\d{2}:\d{2}\.\d{3} --> .*)\n" # ЕП: можно комплировать
+RE_START = r"(\d{2}:\d{2}:\d{2}\.\d{3}) --> (.*)" # ЕП: можно комплировать
+
+
+def parse_start_from_header(line: str) -> time | None:
     _match = re.match(RE_START, line)
     if _match:
         return time.fromisoformat(_match.group(1))
     return None
 
 
-def yield_segments(text: str):
+def yield_segments(text: str): # тип - Iterable[Segment]?
     for line in re.split(RE_SEGMENT, text.strip())[1:]:
-        start = parse_start_from_header(line)
-        if start:
-            res = [start]
+        parsed = parse_start_from_header(line)
+        if parsed:
+            start = parsed
         else:
-            res.append(line.strip())
-            yield Segment(res[0], res[1])
+            yield Segment(start, line)
 
+def yield_multiline(text: str): # тип - Iterable[Segment]?
+    for segment in yield_segments(text):
+        yield segment.sanitize().multiline()
 
 def raw_extract(text: str) -> list[Block]:
     _split_segments = re.split(RE_SEGMENT, text.strip())[1:]
