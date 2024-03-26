@@ -60,6 +60,8 @@ anomaly if you want that we didn't know
     ]
 
 
+#TODO: add deduplication test
+
 @pytest.mark.skip
 @pytest.mark.issue_3
 def test_get_blocks():
