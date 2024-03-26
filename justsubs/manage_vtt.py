@@ -123,7 +123,7 @@ class Segment:
         return Segment(self.start, sanitize(self.block.strip()))
 
     def multiline(self):
-        return multiline(self.start, self.body.splitlines())
+        return Multiline(self.start, self.body.splitlines())
 
 
 def sanitize(text: str) -> str:
